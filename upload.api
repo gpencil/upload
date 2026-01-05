@@ -1,0 +1,106 @@
+syntax = "v1"
+
+@server (
+	group: aliyun
+)
+service uploadApi {
+	@doc "查询列ID"
+	@handler ScenarioId
+	get /scenario_id (EmptyRequest) returns (ScenarioIdResp)
+
+	@doc "上传阿里云图片/音频"
+	@handler UploadOss
+	post /upload/oss (UploadOssReq) returns (UploadOssResp)
+
+	@doc "上传/修改音线"
+	@handler UploadVoice
+	post /upload/voice (UploadVoiceReq) returns (EmptyRequest)
+
+	@doc "获取统一配置"
+	@handler GetUnifiedConfig
+	get /config (GetUnifiedConfigReq) returns (UnifiedConfigResponse)
+}
+
+type (
+	EmptyRequest  {}
+	ScenarioIdResp {
+		ScenarioIds []ScenarioIdData `json:"scenarioIds"`
+	}
+	ScenarioIdData {
+		Id   int64  `json:"id"` // id
+		Name string `json:"name"` // 展示名称
+	}
+	UploadOssReq {
+		FileType string `form:"file_type"` // 文件类型：icon=图标，preview=试听
+	}
+	UploadOssResp {
+		Name string `json:"name"` // 文件名称
+	}
+	UploadVoiceReq {
+		Name        string `json:"name"` // 声线名称
+		VoiceId     string `json:"voice_id"` // 声线ID(英文id)
+		ScenarioId  int64  `json:"scenario_id"` // 场景ID（第几列展示）
+		Description string `json:"description"` // 声线描述
+		IconUrl     string `json:"icon_url"` // 声线图标URL
+		PreviewUrl  string `json:"preview_url"` // 试听地址URL
+		SortOrder   int64  `json:"sort_order"` // 排序权重
+		Style       string `json:"style"` // 声线风格（如：温柔、活泼、专业等）
+		Language    string `json:"language"` // 支持语言(zh-CN,en-US)
+		Status      int64  `json:"status"` // 状态：1=启用，0=禁用
+		AgeGroup    string `json:"age_group"` // 年龄组：child=儿童，young=青年，adult=成年，elderly=老年
+		Gender      string `json:"gender"` // 性别：male=男性，female=女性，neutral=中性
+	}
+	GetUnifiedConfigReq {
+		VoiceId    string `form:"voice_id,optional"` // 声线ID
+		ScenarioId int64  `form:"scenario_id,optional"` // 场景ID
+	}
+	// Voice统一配置响应
+	UnifiedConfigResponse {
+		FullConfigs []ScenarioConfigResponse `json:"fullConfigs"`
+	}
+	ScenarioConfigResponse {
+		Scenario    ScenarioResponse     `json:"scenario"`
+		Voices      []VoiceResponse      `json:"voices"`
+		SampleFiles []SampleFileResponse `json:"sampleFiles"`
+	}
+	ScenarioResponse {
+		Id          int64  `json:"id"`
+		Name        string `json:"name"`
+		Description string `json:"description"`
+		ImageUrl    string `json:"imageUrl"`
+		Status      int32  `json:"status"`
+		CreatedAt   string `json:"createdAt"`
+		UpdatedAt   string `json:"updatedAt"`
+	}
+	VoiceResponse {
+		Id          int64  `json:"id"`
+		VoiceId     string `json:"voiceId"`
+		ScenarioId  int64  `json:"scenarioId"`
+		Name        string `json:"name"`
+		IconUrl     string `json:"iconUrl"`
+		Description string `json:"description"`
+		PreviewUrl  string `json:"previewUrl"`
+		Gender      string `json:"gender"`
+		AgeGroup    string `json:"ageGroup"`
+		Style       string `json:"style"`
+		Language    string `json:"language"`
+		SortOrder   int32  `json:"sortOrder"`
+		Status      int32  `json:"status"`
+		CreatedAt   string `json:"createdAt"`
+		UpdatedAt   string `json:"updatedAt"`
+	}
+	SampleFileResponse {
+		Id         int64  `json:"id"`
+		ScenarioId int64  `json:"scenarioId"`
+		FileName   string `json:"fileName"`
+		FileUrl    string `json:"fileUrl"`
+		FileType   string `json:"fileType"`
+		Content    string `json:"content"`
+		Duration   int32  `json:"duration"`
+		SortOrder  int32  `json:"sortOrder"`
+		Status     int32  `json:"status"`
+		CreatedAt  string `json:"createdAt"`
+		UpdatedAt  string `json:"updatedAt"`
+	}
+)
+

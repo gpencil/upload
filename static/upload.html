@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>声线上传管理</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .card h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="number"],
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-group input[readonly],
+        .form-group textarea[readonly] {
+            background-color: #f5f5f5;
+            cursor: not-allowed;
+            color: #666;
+            border-color: #ddd;
+        }
+
+        .file-upload {
+            border: 2px dashed #667eea;
+            border-radius: 6px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #f9f9f9;
+        }
+
+        .file-upload:hover {
+            background: #f0f0ff;
+            border-color: #764ba2;
+        }
+
+        .file-upload input {
+            display: none;
+        }
+
+        .file-upload-label {
+            color: #667eea;
+            font-weight: 500;
+        }
+
+        .file-name {
+            margin-top: 10px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+            margin-left: 10px;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 6px;
+            display: none;
+        }
+
+        .result.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .result.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 15px;
+            align-items: flex-end;
+            margin-bottom: 20px;
+        }
+
+        .search-box .form-group {
+            margin-bottom: 0;
+            flex: 1;
+        }
+
+        .voice-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .voice-item {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            background: #f9f9f9;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .voice-item:hover {
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .voice-item.selected {
+            border-color: #667eea;
+            background: #f0f0ff;
+        }
+
+        .voice-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .voice-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            object-fit: cover;
+            background: #ddd;
+        }
+
+        .voice-info h3 {
+            margin: 0;
+            font-size: 16px;
+            color: #333;
+        }
+
+        .voice-info p {
+            margin: 5px 0 0 0;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .voice-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .badge.gender {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .badge.age {
+            background: #f3e5f5;
+            color: #7b1fa2;
+        }
+
+        .badge.language {
+            background: #e8f5e9;
+            color: #388e3c;
+        }
+
+        .badge.status-active {
+            background: #c8e6c9;
+            color: #2e7d32;
+        }
+
+        .badge.status-inactive {
+            background: #ffcdd2;
+            color: #c62828;
+        }
+
+        .voice-description {
+            margin-top: 10px;
+            font-size: 13px;
+            color: #555;
+            line-height: 1.4;
+        }
+
+        .voice-actions {
+            margin-top: 10px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-small {
+            padding: 5px 12px;
+            font-size: 12px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state svg {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        .audio-player {
+            margin-top: 10px;
+        }
+
+        .audio-player audio {
+            width: 100%;
+            height: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎙️ 声线上传管理系统</h1>
+            <p>上传声线图标和试听音频，管理声线配置</p>
+        </div>
+
+        <div class="card">
+            <h2>📤 文件上传</h2>
+            <div class="grid">
+                <div>
+                    <h3 style="margin-bottom: 15px; color: #667eea;">上传声线图标</h3>
+                    <div class="file-upload" onclick="document.getElementById('iconFile').click()">
+                        <input type="file" id="iconFile" accept="image/*" onchange="uploadFile('icon', this.files[0])">
+                        <div class="file-upload-label">📷 点击选择图标文件</div>
+                        <div class="file-name" id="iconFileName">支持 JPG, PNG 等图片格式</div>
+                    </div>
+                    <div class="result" id="iconResult"></div>
+                </div>
+
+                <div>
+                    <h3 style="margin-bottom: 15px; color: #667eea;">上传试听音频</h3>
+                    <div class="file-upload" onclick="document.getElementById('previewFile').click()">
+                        <input type="file" id="previewFile" accept="audio/*" onchange="uploadFile('preview', this.files[0])">
+                        <div class="file-upload-label">🎵 点击选择音频文件</div>
+                        <div class="file-name" id="previewFileName">支持 MP3, WAV 等音频格式</div>
+                    </div>
+                    <div class="result" id="previewResult"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>📝 声线信息管理</h2>
+            <form id="voiceForm">
+                <div class="grid">
+                    <div class="form-group">
+                        <label for="voiceId">声线ID (英文) *</label>
+                        <input type="text" id="voiceId" required placeholder="例如: Jingcheng">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="name">声线名称 *</label>
+                        <input type="text" id="name" required placeholder="例如: 景澄">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="scenarioId">场景 *</label>
+                        <select id="scenarioId" required>
+                            <option value="">请选择场景</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="sortOrder">排序权重</label>
+                        <input type="number" id="sortOrder" value="0" placeholder="数字越大越靠前">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="gender">性别</label>
+                        <select id="gender">
+                            <option value="female">女性</option>
+                            <option value="male">男性</option>
+                            <option value="neutral">中性</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ageGroup">年龄组</label>
+                        <select id="ageGroup">
+                            <option value="adult">成年</option>
+                            <option value="young">青年</option>
+                            <option value="child">儿童</option>
+                            <option value="elderly">老年</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="style">声线风格</label>
+                        <input type="text" id="style" placeholder="例如: 温柔、活泼、专业">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="language">支持语言</label>
+                        <select id="language">
+                            <option value="zh-CN">中文</option>
+                            <option value="en-US">英语</option>
+                            <option value="zh-CN,en-US">中英文</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="status">状态</label>
+                        <select id="status">
+                            <option value="1">启用</option>
+                            <option value="0">禁用</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="iconUrl">声线图标URL</label>
+                    <input type="text" id="iconUrl" placeholder="从上方上传图标后自动填充" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label for="previewUrl">试听地址URL</label>
+                    <input type="text" id="previewUrl" placeholder="从上方上传音频后自动填充" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">声线描述</label>
+                    <textarea id="description" placeholder="详细描述声线特点..."></textarea>
+                </div>
+
+                <div style="margin-top: 30px;">
+                    <button type="submit" class="btn btn-primary">💾 保存声线信息</button>
+                    <button type="button" class="btn btn-secondary" onclick="resetForm()">🔄 重置</button>
+                </div>
+
+                <div class="result" id="voiceResult"></div>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2>🔍 声线列表查询</h2>
+
+            <div class="search-box">
+                <div class="form-group">
+                    <label for="searchVoiceId">声线ID</label>
+                    <input type="text" id="searchVoiceId" placeholder="输入声线ID查询">
+                </div>
+
+                <div class="form-group">
+                    <label for="searchScenarioId">场景ID</label>
+                    <input type="number" id="searchScenarioId" placeholder="输入场景ID查询">
+                </div>
+
+                <div>
+                    <button type="button" class="btn btn-primary" onclick="searchVoices()">🔍 查询</button>
+                    <button type="button" class="btn btn-secondary" onclick="clearSearch()">清空</button>
+                </div>
+            </div>
+
+            <div id="voiceListContainer">
+                <div class="empty-state">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"></path>
+                        <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                        <polyline points="7 3 7 8 15 8"></polyline>
+                    </svg>
+                    <p>暂无数据，点击"查询"按钮加载声线列表</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8889';
+
+        async function uploadFile(type, file) {
+            if (!file) return;
+
+            const fileNameElement = document.getElementById(type + 'FileName');
+            const resultElement = document.getElementById(type + 'Result');
+
+            fileNameElement.textContent = '上传中: ' + file.name;
+            resultElement.style.display = 'none';
+
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('file_type', type);
+
+            try {
+                const response = await fetch(API_BASE + '/upload/oss', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                // 兼容两种响应格式：code 和 errorCode
+                const isSuccess = (result.code === 0 || result.errorCode === 0 || result.succeed === true) && result.data;
+
+                if (isSuccess) {
+                    fileNameElement.textContent = '✅ ' + file.name;
+                    resultElement.className = 'result success';
+                    resultElement.textContent = '上传成功！URL: ' + result.data.name;
+                    resultElement.style.display = 'block';
+
+                    // 自动填充对应的URL字段并设为只读
+                    if (type === 'icon') {
+                        const iconUrlInput = document.getElementById('iconUrl');
+                        iconUrlInput.value = result.data.name;
+                        iconUrlInput.readOnly = true;
+                    } else {
+                        const previewUrlInput = document.getElementById('previewUrl');
+                        previewUrlInput.value = result.data.name;
+                        previewUrlInput.readOnly = true;
+                    }
+                } else {
+                    throw new Error(result.msg || result.errorMessage || '上传失败');
+                }
+            } catch (error) {
+                fileNameElement.textContent = '❌ ' + file.name;
+                resultElement.className = 'result error';
+                resultElement.textContent = '上传失败: ' + error.message;
+                resultElement.style.display = 'block';
+            }
+        }
+
+        document.getElementById('voiceForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const resultElement = document.getElementById('voiceResult');
+            resultElement.style.display = 'none';
+
+            // 获取并去除所有字符串字段的首尾空格
+            const data = {
+                voice_id: document.getElementById('voiceId').value.trim(),
+                name: document.getElementById('name').value.trim(),
+                scenario_id: parseInt(document.getElementById('scenarioId').value),
+                sort_order: parseInt(document.getElementById('sortOrder').value),
+                gender: document.getElementById('gender').value.trim(),
+                age_group: document.getElementById('ageGroup').value.trim(),
+                style: document.getElementById('style').value.trim(),
+                language: document.getElementById('language').value.trim(),
+                status: parseInt(document.getElementById('status').value),
+                icon_url: document.getElementById('iconUrl').value.trim(),
+                preview_url: document.getElementById('previewUrl').value.trim(),
+                description: document.getElementById('description').value.trim()
+            };
+
+            try {
+                const response = await fetch(API_BASE + '/upload/voice', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                // 兼容两种响应格式：code 和 errorCode
+                const isSuccess = result.code === 0 || result.errorCode === 0 || result.succeed === true;
+
+                if (isSuccess) {
+                    resultElement.className = 'result success';
+                    resultElement.textContent = '✅ 声线信息保存成功！';
+                    resultElement.style.display = 'block';
+
+                    // 3秒后重置表单
+                    setTimeout(() => {
+                        resetForm();
+                    }, 3000);
+                } else {
+                    throw new Error(result.msg || result.errorMessage || '保存失败');
+                }
+            } catch (error) {
+                resultElement.className = 'result error';
+                resultElement.textContent = '❌ 保存失败: ' + error.message;
+                resultElement.style.display = 'block';
+            }
+        });
+
+        function resetForm() {
+            document.getElementById('voiceForm').reset();
+
+            // 重置 URL 字段并移除只读状态，允许重新上传
+            const iconUrlInput = document.getElementById('iconUrl');
+            const previewUrlInput = document.getElementById('previewUrl');
+            iconUrlInput.value = '';
+            previewUrlInput.value = '';
+            iconUrlInput.readOnly = true;  // 保持只读，只能通过上传填充
+            previewUrlInput.readOnly = true;  // 保持只读，只能通过上传填充
+
+            document.getElementById('voiceResult').style.display = 'none';
+            document.getElementById('iconResult').style.display = 'none';
+            document.getElementById('previewResult').style.display = 'none';
+            document.getElementById('iconFileName').textContent = '支持 JPG, PNG 等图片格式';
+            document.getElementById('previewFileName').textContent = '支持 MP3, WAV 等音频格式';
+        }
+
+        // 查询声线列表
+        async function searchVoices() {
+            const voiceId = document.getElementById('searchVoiceId').value.trim();
+            const scenarioId = document.getElementById('searchScenarioId').value.trim();
+
+            const params = new URLSearchParams();
+            if (voiceId) params.append('voice_id', voiceId);
+            if (scenarioId) params.append('scenario_id', scenarioId);
+
+            try {
+                const response = await fetch(API_BASE + '/config?' + params.toString());
+                const result = await response.json();
+
+                const isSuccess = result.code === 0 || result.errorCode === 0 || result.succeed === true;
+
+                if (isSuccess && result.data && result.data.fullConfigs) {
+                    renderVoiceList(result.data.fullConfigs);
+                } else {
+                    throw new Error(result.msg || result.errorMessage || '查询失败');
+                }
+            } catch (error) {
+                showEmptyState('查询失败: ' + error.message);
+            }
+        }
+
+        // 存储当前查询的所有声线数据
+        let allVoicesData = [];
+
+        // 渲染声线列表
+        function renderVoiceList(fullConfigs) {
+            const container = document.getElementById('voiceListContainer');
+            allVoicesData = [];
+
+            fullConfigs.forEach(config => {
+                if (config.voices && config.voices.length > 0) {
+                    allVoicesData = allVoicesData.concat(config.voices);
+                }
+            });
+
+            if (allVoicesData.length === 0) {
+                showEmptyState('没有找到符合条件的声线');
+                return;
+            }
+
+            const html = '<div class="voice-list">' + allVoicesData.map(voice => createVoiceCard(voice)).join('') + '</div>';
+            container.innerHTML = html;
+        }
+
+        // 创建声线卡片
+        function createVoiceCard(voice) {
+            const genderMap = { 'male': '男性', 'female': '女性', 'neutral': '中性' };
+            const ageMap = { 'child': '儿童', 'young': '青年', 'adult': '成年', 'elderly': '老年' };
+            const statusClass = voice.status === 1 ? 'status-active' : 'status-inactive';
+            const statusText = voice.status === 1 ? '启用' : '禁用';
+
+            return `
+                <div class="voice-item">
+                    <div class="voice-header">
+                        ${voice.iconUrl ? '<img src="' + voice.iconUrl + '" alt="' + voice.name + '" class="voice-icon" onerror="this.style.display=\'none\'">' : '<div class="voice-icon"></div>'}
+                        <div class="voice-info">
+                            <h3>${voice.name}</h3>
+                            <p>ID: ${voice.voiceId} | 场景: ${voice.scenarioId} | 排序: ${voice.sortOrder}</p>
+                        </div>
+                    </div>
+                    <div class="voice-meta">
+                        <span class="badge gender">${genderMap[voice.gender] || voice.gender}</span>
+                        <span class="badge age">${ageMap[voice.ageGroup] || voice.ageGroup}</span>
+                        <span class="badge language">${voice.language}</span>
+                        ${voice.style ? '<span class="badge">' + voice.style + '</span>' : ''}
+                        <span class="badge ${statusClass}">${statusText}</span>
+                    </div>
+                    ${voice.description ? '<div class="voice-description">' + voice.description + '</div>' : ''}
+                    ${voice.previewUrl ? '<div class="audio-player"><audio controls preload="none"><source src="' + voice.previewUrl + '" type="audio/mpeg">您的浏览器不支持音频播放</audio></div>' : ''}
+                    <div class="voice-actions">
+                        <button class="btn btn-primary btn-small" onclick="loadVoiceToForm(${voice.id})">📝 编辑</button>
+                        ${voice.iconUrl ? '<button class="btn btn-secondary btn-small" onclick="window.open(\'' + voice.iconUrl + '\', \'_blank\')">🖼️ 查看图标</button>' : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        // 显示空状态
+        function showEmptyState(message) {
+            document.getElementById('voiceListContainer').innerHTML = `
+                <div class="empty-state">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                    <p>${message}</p>
+                </div>
+            `;
+        }
+
+        // 加载声线到表单
+        function loadVoiceToForm(voiceId) {
+            const voice = allVoicesData.find(v => v.id === voiceId);
+            if (!voice) return;
+
+            document.getElementById('voiceId').value = voice.voiceId;
+            document.getElementById('name').value = voice.name;
+            document.getElementById('scenarioId').value = voice.scenarioId;
+            document.getElementById('sortOrder').value = voice.sortOrder;
+            document.getElementById('gender').value = voice.gender;
+            document.getElementById('ageGroup').value = voice.ageGroup;
+            document.getElementById('style').value = voice.style || '';
+            document.getElementById('language').value = voice.language;
+            document.getElementById('status').value = voice.status;
+            document.getElementById('description').value = voice.description || '';
+
+            // 设置 URL 字段并保持只读状态
+            const iconUrlInput = document.getElementById('iconUrl');
+            const previewUrlInput = document.getElementById('previewUrl');
+            iconUrlInput.value = voice.iconUrl || '';
+            previewUrlInput.value = voice.previewUrl || '';
+            iconUrlInput.readOnly = true;
+            previewUrlInput.readOnly = true;
+
+            // 滚动到表单位置
+            document.querySelector('.card:nth-child(3)').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // 清空搜索
+        function clearSearch() {
+            document.getElementById('searchVoiceId').value = '';
+            document.getElementById('searchScenarioId').value = '';
+            showEmptyState('暂无数据，点击"查询"按钮加载声线列表');
+        }
+
+        // 加载场景列表
+        async function loadScenarios() {
+            try {
+                const response = await fetch(API_BASE + '/scenario_id');
+                const result = await response.json();
+
+                const isSuccess = result.code === 0 || result.errorCode === 0 || result.succeed === true;
+
+                if (isSuccess && result.data && result.data.scenarioIds) {
+                    const scenarioSelect = document.getElementById('scenarioId');
+
+                    // 清空现有选项（保留第一个"请选择"）
+                    scenarioSelect.innerHTML = '<option value="">请选择场景</option>';
+
+                    // 添加场景选项
+                    result.data.scenarioIds.forEach(scenario => {
+                        const option = document.createElement('option');
+                        option.value = scenario.id;
+                        option.textContent = scenario.name;
+                        scenarioSelect.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('加载场景列表失败:', error);
+            }
+        }
+
+        // 页面加载完成后自动查询所有声线和场景列表
+        window.addEventListener('load', () => {
+            loadScenarios();
+            searchVoices();
+        });
+    </script>
+</body>
+</html>

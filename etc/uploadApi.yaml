@@ -1,0 +1,28 @@
+Name: uploadApi
+Host: 0.0.0.0
+Port: 8889
+MaxBytes: 20971520  # 最大请求体大小 20MB (20 * 1024 * 1024)
+
+Log:
+  ServiceName: upload-api
+  Mode: console # console｜file
+  Level: debug # debug prod环境，改成info
+  Stat: false
+  KeepDays: 1 # 日志保留多少天
+  Encoding: plain
+
+DB:
+  DataSourceName: "root:12345678@tcp(localhost:3306)/tts_dev?charset=utf8mb4&parseTime=true&loc=Local"
+  SlowThreshold: 1s  # 慢查询阈值
+  MaxOpenConns: 20   # 最大打开连接数
+  MaxIdleConns: 8    # 最大空闲连接数
+  ConnMaxLifetime: 3600 # 连接最大生存时间（秒）
+
+Aliyun:
+  AccessKeyID: "AliyunAccessKeyID"
+  AccessKeySecret: "AliyunAccessKeySecret"
+  Endpoint: oss-cn-hangzhou.aliyuncs.com
+  BucketName: lunalab-res
+  IconDir: ttsIconV1
+  PreviewDir: ttsPreV1
+
