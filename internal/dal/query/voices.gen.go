@@ -42,6 +42,7 @@ func newVoices(db *gorm.DB, opts ...gen.DOOption) voices {
 	_voices.Status = field.NewBool(tableName, "status")
 	_voices.CreatedAt = field.NewInt64(tableName, "created_at")
 	_voices.UpdatedAt = field.NewInt64(tableName, "updated_at")
+	_voices.VoiceHash = field.NewString(tableName, "voice_hash")
 
 	_voices.fillFieldMap()
 
@@ -68,6 +69,7 @@ type voices struct {
 	Status      field.Bool   // 状态：1=启用，0=禁用
 	CreatedAt   field.Int64  // 创建时间
 	UpdatedAt   field.Int64  // 更新时间
+	VoiceHash   field.String // 音色hash值
 
 	fieldMap map[string]field.Expr
 }
@@ -99,6 +101,7 @@ func (v *voices) updateTableName(table string) *voices {
 	v.Status = field.NewBool(table, "status")
 	v.CreatedAt = field.NewInt64(table, "created_at")
 	v.UpdatedAt = field.NewInt64(table, "updated_at")
+	v.VoiceHash = field.NewString(table, "voice_hash")
 
 	v.fillFieldMap()
 
@@ -123,7 +126,7 @@ func (v *voices) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (v *voices) fillFieldMap() {
-	v.fieldMap = make(map[string]field.Expr, 15)
+	v.fieldMap = make(map[string]field.Expr, 16)
 	v.fieldMap["id"] = v.ID
 	v.fieldMap["voice_id"] = v.VoiceID
 	v.fieldMap["scenario_id"] = v.ScenarioID
@@ -139,6 +142,7 @@ func (v *voices) fillFieldMap() {
 	v.fieldMap["status"] = v.Status
 	v.fieldMap["created_at"] = v.CreatedAt
 	v.fieldMap["updated_at"] = v.UpdatedAt
+	v.fieldMap["voice_hash"] = v.VoiceHash
 }
 
 func (v voices) clone(db *gorm.DB) voices {

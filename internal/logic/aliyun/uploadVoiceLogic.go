@@ -75,7 +75,7 @@ func (l *UploadVoiceLogic) UploadVoice(req *types.UploadVoiceReq) (resp *types.E
 		}
 	} else {
 		// 如果存在，则更新声线
-		_, err = vc.WithContext(l.ctx).Where(vc.VoiceID.Eq(voiceId)).Updates(map[string]interface{}{
+		updateData := map[string]interface{}{
 			"scenario_id": req.ScenarioId,
 			"name":        req.Name,
 			"icon_url":    req.IconUrl,
@@ -88,7 +88,18 @@ func (l *UploadVoiceLogic) UploadVoice(req *types.UploadVoiceReq) (resp *types.E
 			"sort_order":  sortOrder,
 			"status":      status,
 			"updated_at":  now,
-		})
+		}
+
+		// 检查 preview_url 或 description 是否发生变化，如果变化则清空 voice_hash
+		if (existingVoice.PreviewURL != nil && *existingVoice.PreviewURL != req.PreviewUrl) ||
+			(existingVoice.Description != nil && *existingVoice.Description != req.Description) ||
+			(existingVoice.PreviewURL == nil && req.PreviewUrl != "") ||
+			(existingVoice.Description == nil && req.Description != "") {
+			updateData["voice_hash"] = ""
+			l.Infof("preview_url 或 description 发生变化，清空 voice_hash")
+		}
+
+		_, err = vc.WithContext(l.ctx).Where(vc.VoiceID.Eq(voiceId)).Updates(updateData)
 
 		if err != nil {
 			l.Errorf("更新声线失败: %v", err)

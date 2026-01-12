@@ -23,6 +23,7 @@ type Voices struct {
 	Status      *bool   `gorm:"column:status;default:1;comment:状态：1=启用，0=禁用" json:"status"`                                        // 状态：1=启用，0=禁用
 	CreatedAt   int64   `gorm:"column:created_at;not null;comment:创建时间" json:"created_at"`                                         // 创建时间
 	UpdatedAt   int64   `gorm:"column:updated_at;not null;comment:更新时间" json:"updated_at"`                                         // 更新时间
+	VoiceHash   *string `gorm:"column:voice_hash;comment:音色hash值" json:"voice_hash"`                                               // 音色hash值
 }
 
 // TableName Voices's table name
