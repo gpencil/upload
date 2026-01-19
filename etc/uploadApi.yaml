@@ -12,7 +12,8 @@ Log:
   Encoding: plain
 
 DB:
-  DataSourceName: "root:12345678@tcp(localhost:3306)/tts_dev?charset=utf8mb4&parseTime=true&loc=Local"
+#  DataSourceName: "root:12345678@tcp(localhost:3306)/tts_dev?charset=utf8mb4&parseTime=true&loc=Local"
+  DataSourceName: "tts:X&G6RcMJUm2&HN&z@tcp(rm-bp112a985ve90l1bvko.rwlb.rds.aliyuncs.com:3306)/tts-dev?charset=utf8mb4&parseTime=true&loc=Local"
   SlowThreshold: 1s  # 慢查询阈值
   MaxOpenConns: 20   # 最大打开连接数
   MaxIdleConns: 8    # 最大空闲连接数

@@ -58,6 +58,7 @@ func (l *UploadVoiceLogic) UploadVoice(req *types.UploadVoiceReq) (resp *types.E
 			IconURL:     &req.IconUrl,
 			Description: &req.Description,
 			PreviewURL:  &req.PreviewUrl,
+			PreviewDesc: &req.PreviewDesc,
 			Gender:      &req.Gender,
 			AgeGroup:    &req.AgeGroup,
 			Style:       &req.Style,
@@ -74,26 +75,36 @@ func (l *UploadVoiceLogic) UploadVoice(req *types.UploadVoiceReq) (resp *types.E
 			return nil, fmt.Errorf("创建声线失败")
 		}
 	} else {
+		// 检查 preview_url 是否发生变化
+		previewUrlChanged := (existingVoice.PreviewURL != nil && *existingVoice.PreviewURL != req.PreviewUrl) ||
+			(existingVoice.PreviewURL == nil && req.PreviewUrl != "")
+
+		// 如果 preview_url 发生变化，preview_desc 不能为空
+		if previewUrlChanged && req.PreviewDesc == "" {
+			l.Errorf("preview_url 发生变化时，preview_desc 不能为空")
+			return nil, fmt.Errorf("音频地址变化时，音频文案不能为空")
+		}
+
 		// 如果存在，则更新声线
 		updateData := map[string]interface{}{
-			"scenario_id": req.ScenarioId,
-			"name":        req.Name,
-			"icon_url":    req.IconUrl,
-			"description": req.Description,
-			"preview_url": req.PreviewUrl,
-			"gender":      req.Gender,
-			"age_group":   req.AgeGroup,
-			"style":       req.Style,
-			"language":    req.Language,
-			"sort_order":  sortOrder,
-			"status":      status,
-			"updated_at":  now,
+			"scenario_id":  req.ScenarioId,
+			"name":         req.Name,
+			"icon_url":     req.IconUrl,
+			"description":  req.Description,
+			"preview_url":  req.PreviewUrl,
+			"preview_desc": req.PreviewDesc,
+			"gender":       req.Gender,
+			"age_group":    req.AgeGroup,
+			"style":        req.Style,
+			"language":     req.Language,
+			"sort_order":   sortOrder,
+			"status":       status,
+			"updated_at":   now,
 		}
 
 		// 检查 preview_url 或 description 是否发生变化，如果变化则清空 voice_hash
-		if (existingVoice.PreviewURL != nil && *existingVoice.PreviewURL != req.PreviewUrl) ||
+		if previewUrlChanged ||
 			(existingVoice.Description != nil && *existingVoice.Description != req.Description) ||
-			(existingVoice.PreviewURL == nil && req.PreviewUrl != "") ||
 			(existingVoice.Description == nil && req.Description != "") {
 			updateData["voice_hash"] = ""
 			l.Infof("preview_url 或 description 发生变化，清空 voice_hash")

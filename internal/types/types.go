@@ -63,18 +63,19 @@ type UploadOssResp struct {
 }
 
 type UploadVoiceReq struct {
-	Name        string `json:"name"`        // 声线名称
-	VoiceId     string `json:"voice_id"`    // 声线ID(英文id)
-	ScenarioId  int64  `json:"scenario_id"` // 场景ID（第几列展示）
-	Description string `json:"description"` // 声线描述
-	IconUrl     string `json:"icon_url"`    // 声线图标URL
-	PreviewUrl  string `json:"preview_url"` // 试听地址URL
-	SortOrder   int64  `json:"sort_order"`  // 排序权重
-	Style       string `json:"style"`       // 声线风格（如：温柔、活泼、专业等）
-	Language    string `json:"language"`    // 支持语言(zh-CN,en-US)
-	Status      int64  `json:"status"`      // 状态：1=启用，0=禁用
-	AgeGroup    string `json:"age_group"`   // 年龄组：child=儿童，young=青年，adult=成年，elderly=老年
-	Gender      string `json:"gender"`      // 性别：male=男性，female=女性，neutral=中性
+	Name        string `json:"name"`         // 声线名称
+	VoiceId     string `json:"voice_id"`     // 声线ID(英文id)
+	ScenarioId  int64  `json:"scenario_id"`  // 场景ID（第几列展示）
+	Description string `json:"description"`  // 声线描述
+	IconUrl     string `json:"icon_url"`     // 声线图标URL
+	PreviewUrl  string `json:"preview_url"`  // 试听地址URL
+	PreviewDesc string `json:"preview_desc"` // 音频文案
+	SortOrder   int64  `json:"sort_order"`   // 排序权重
+	Style       string `json:"style"`        // 声线风格（如：温柔、活泼、专业等）
+	Language    string `json:"language"`     // 支持语言(zh-CN,en-US)
+	Status      int64  `json:"status"`       // 状态：1=启用，0=禁用
+	AgeGroup    string `json:"age_group"`    // 年龄组：child=儿童，young=青年，adult=成年，elderly=老年
+	Gender      string `json:"gender"`       // 性别：male=男性，female=女性，neutral=中性
 }
 
 type VoiceResponse struct {
@@ -85,6 +86,7 @@ type VoiceResponse struct {
 	IconUrl     string `json:"iconUrl"`
 	Description string `json:"description"`
 	PreviewUrl  string `json:"previewUrl"`
+	PreviewDesc string `json:"previewDesc"`
 	Gender      string `json:"gender"`
 	AgeGroup    string `json:"ageGroup"`
 	Style       string `json:"style"`

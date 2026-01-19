@@ -13,6 +13,7 @@ import (
 )
 
 func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
+	// 静态文件服务
 	server.AddRoutes(
 		[]rest.Route{
 			{

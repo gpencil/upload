@@ -15,6 +15,7 @@ type Voices struct {
 	IconURL     *string `gorm:"column:icon_url;comment:声线图标URL" json:"icon_url"`                                                   // 声线图标URL
 	Description *string `gorm:"column:description;comment:声线描述" json:"description"`                                                // 声线描述
 	PreviewURL  *string `gorm:"column:preview_url;comment:试听地址URL" json:"preview_url"`                                             // 试听地址URL
+	PreviewDesc *string `gorm:"column:preview_desc;comment:音频文本" json:"preview_desc"`                                              // 音频文本
 	Gender      *string `gorm:"column:gender;default:neutral;comment:性别：male=男性，female=女性，neutral=中性" json:"gender"`               // 性别：male=男性，female=女性，neutral=中性
 	AgeGroup    *string `gorm:"column:age_group;default:adult;comment:年龄组：child=儿童，young=青年，adult=成年，elderly=老年" json:"age_group"` // 年龄组：child=儿童，young=青年，adult=成年，elderly=老年
 	Style       *string `gorm:"column:style;comment:声线风格（如：温柔、活泼、专业等）" json:"style"`                                               // 声线风格（如：温柔、活泼、专业等）

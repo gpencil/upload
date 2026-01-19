@@ -65,6 +65,7 @@ func (l *GetUnifiedConfigLogic) GetUnifiedConfig(req *types.GetUnifiedConfigReq)
 			IconUrl:     l.getStringValue(voice.IconURL),
 			Description: l.getStringValue(voice.Description),
 			PreviewUrl:  l.getStringValue(voice.PreviewURL),
+			PreviewDesc: l.getStringValue(voice.PreviewDesc),
 			Gender:      l.getStringValue(voice.Gender),
 			AgeGroup:    l.getStringValue(voice.AgeGroup),
 			Style:       l.getStringValue(voice.Style),

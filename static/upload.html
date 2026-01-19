@@ -435,6 +435,11 @@
                 </div>
 
                 <div class="form-group">
+                    <label for="previewDesc">音频文稿</label>
+                    <textarea id="previewDesc" placeholder="请输入音频对应的文稿内容..."></textarea>
+                </div>
+
+                <div class="form-group">
                     <label for="description">声线描述</label>
                     <textarea id="description" placeholder="详细描述声线特点..."></textarea>
                 </div>
@@ -482,8 +487,8 @@
     </div>
 
     <script>
-        // const API_BASE = 'http://localhost:8889';
-        const API_BASE = 'http://192.168.50.49:8889/';
+        const API_BASE = 'http://localhost:8889';
+        // const API_BASE = 'http://192.168.50.49:8891/';
 
         async function uploadFile(type, file) {
             if (!file) return;
@@ -555,6 +560,7 @@
                 status: parseInt(document.getElementById('status').value),
                 icon_url: document.getElementById('iconUrl').value.trim(),
                 preview_url: document.getElementById('previewUrl').value.trim(),
+                preview_desc: document.getElementById('previewDesc').value.trim(),
                 description: document.getElementById('description').value.trim()
             };
 
@@ -682,6 +688,7 @@
                     </div>
                     ${voice.description ? '<div class="voice-description">' + voice.description + '</div>' : ''}
                     ${voice.previewUrl ? '<div class="audio-player"><audio controls preload="none"><source src="' + voice.previewUrl + '" type="audio/mpeg">您的浏览器不支持音频播放</audio></div>' : ''}
+                    ${voice.previewDesc ? '<div class="voice-description" style="margin-top: 10px; padding: 10px; background: #f0f8ff; border-left: 3px solid #667eea;"><strong>🎙️ 音频文稿：</strong>' + voice.previewDesc + '</div>' : ''}
                     <div class="voice-actions">
                         <button class="btn btn-primary btn-small" onclick="loadVoiceToForm(${voice.id})">📝 编辑</button>
                         ${voice.iconUrl ? '<button class="btn btn-secondary btn-small" onclick="window.open(\'' + voice.iconUrl + '\', \'_blank\')">🖼️ 查看图标</button>' : ''}
@@ -719,6 +726,7 @@
             document.getElementById('language').value = voice.language;
             document.getElementById('status').value = voice.status;
             document.getElementById('description').value = voice.description || '';
+            document.getElementById('previewDesc').value = voice.previewDesc || '';
 
             // 设置 URL 字段并保持只读状态
             const iconUrlInput = document.getElementById('iconUrl');

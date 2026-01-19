@@ -34,6 +34,7 @@ func newVoices(db *gorm.DB, opts ...gen.DOOption) voices {
 	_voices.IconURL = field.NewString(tableName, "icon_url")
 	_voices.Description = field.NewString(tableName, "description")
 	_voices.PreviewURL = field.NewString(tableName, "preview_url")
+	_voices.PreviewDesc = field.NewString(tableName, "preview_desc")
 	_voices.Gender = field.NewString(tableName, "gender")
 	_voices.AgeGroup = field.NewString(tableName, "age_group")
 	_voices.Style = field.NewString(tableName, "style")
@@ -61,6 +62,7 @@ type voices struct {
 	IconURL     field.String // 声线图标URL
 	Description field.String // 声线描述
 	PreviewURL  field.String // 试听地址URL
+	PreviewDesc field.String // 音频文本
 	Gender      field.String // 性别：male=男性，female=女性，neutral=中性
 	AgeGroup    field.String // 年龄组：child=儿童，young=青年，adult=成年，elderly=老年
 	Style       field.String // 声线风格（如：温柔、活泼、专业等）
@@ -93,6 +95,7 @@ func (v *voices) updateTableName(table string) *voices {
 	v.IconURL = field.NewString(table, "icon_url")
 	v.Description = field.NewString(table, "description")
 	v.PreviewURL = field.NewString(table, "preview_url")
+	v.PreviewDesc = field.NewString(table, "preview_desc")
 	v.Gender = field.NewString(table, "gender")
 	v.AgeGroup = field.NewString(table, "age_group")
 	v.Style = field.NewString(table, "style")
@@ -126,7 +129,7 @@ func (v *voices) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (v *voices) fillFieldMap() {
-	v.fieldMap = make(map[string]field.Expr, 16)
+	v.fieldMap = make(map[string]field.Expr, 17)
 	v.fieldMap["id"] = v.ID
 	v.fieldMap["voice_id"] = v.VoiceID
 	v.fieldMap["scenario_id"] = v.ScenarioID
@@ -134,6 +137,7 @@ func (v *voices) fillFieldMap() {
 	v.fieldMap["icon_url"] = v.IconURL
 	v.fieldMap["description"] = v.Description
 	v.fieldMap["preview_url"] = v.PreviewURL
+	v.fieldMap["preview_desc"] = v.PreviewDesc
 	v.fieldMap["gender"] = v.Gender
 	v.fieldMap["age_group"] = v.AgeGroup
 	v.fieldMap["style"] = v.Style
