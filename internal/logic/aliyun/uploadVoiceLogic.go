@@ -106,7 +106,7 @@ func (l *UploadVoiceLogic) UploadVoice(req *types.UploadVoiceReq) (resp *types.E
 		if previewUrlChanged ||
 			(existingVoice.Description != nil && *existingVoice.Description != req.Description) ||
 			(existingVoice.Description == nil && req.Description != "") {
-			updateData["voice_hash"] = ""
+			updateData["voice_hash"] = nil
 			l.Infof("preview_url 或 description 发生变化，清空 voice_hash")
 		}
 

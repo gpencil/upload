@@ -1,6 +1,7 @@
 Name: uploadApi
 Host: 0.0.0.0
 Port: 8889
+Timeout: 5000  # 请求超时时间 5秒 (单位: 毫秒)
 MaxBytes: 20971520  # 最大请求体大小 20MB (20 * 1024 * 1024)
 
 Log:
